@@ -27,7 +27,7 @@ const RestoreAccount = (): ReactElement => {
 
       <div className={"buttons"}>
         {!loading && (
-          <Link href={`/recover`} passHref>
+          <Link href={`/generateRecover`} passHref>
             <Button onClick={handleGetWallet}>Recover Wallet</Button>
           </Link>
         )}

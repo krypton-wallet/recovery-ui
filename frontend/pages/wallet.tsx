@@ -96,7 +96,7 @@ const Wallet: NextPage = () => {
             </>
           )}
 
-          <Button type="primary" onClick={showModal}>
+          {/* <Button type="primary" onClick={showModal}>
             Send <ArrowRightOutlined />
           </Button>
 
@@ -108,7 +108,7 @@ const Wallet: NextPage = () => {
             height={"55vh"}
           >
             <TransactionLayout />
-          </Drawer>
+          </Drawer> */}
         </Dashboard>
       )}
     </>

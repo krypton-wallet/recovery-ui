@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { NextPage } from "next";
 import { Button, Alert, Popconfirm, Modal, Form, Input, Radio } from "antd";
-import PhraseBox from "../components/PhraseBox";
+import PhraseBox from "../components/UrlBox";
 import { useGlobalState } from "../context";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
@@ -55,13 +55,7 @@ const feePayer_sk = new Uint8Array([
 const Guardian: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const {
-    setGuardians,
-    guardians,
-    programId,
-    pda,
-    account,
-  } = useGlobalState();
+  const { setGuardians, guardians, programId, pda, account } = useGlobalState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
 
@@ -122,7 +116,7 @@ const Guardian: NextPage = () => {
       {
         skipPreflight: true,
         preflightCommitment: "confirmed",
-        commitment: "confirmed"
+        commitment: "confirmed",
       }
     );
     console.log(`https://explorer.solana.com/tx/${txid}?cluster=devnet`);
@@ -166,38 +160,40 @@ const Guardian: NextPage = () => {
         onCancel={handleModalCancel}
         confirmLoading={loading}
       >
-        { !loading && <Form
-          form={form}
-          layout="vertical"
-          name="form_in_modal"
-          initialValues={{ modifier: "ff" }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            name="guardian"
-            label="Guardian Public Key"
-            rules={[
-              {
-                required: true,
-                message: "Please input the public key of guardian",
-              },
-            ]}
+        {!loading && (
+          <Form
+            form={form}
+            layout="vertical"
+            name="form_in_modal"
+            initialValues={{ modifier: "ff" }}
+            onFinish={onFinish}
           >
-            <Input />
-          </Form.Item>
-          {/* <Form.Item name="description" label="Description">
+            <Form.Item
+              name="guardian"
+              label="Guardian Public Key"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the public key of guardian",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            {/* <Form.Item name="description" label="Description">
             <Input type="textarea" />
           </Form.Item> */}
-          <Form.Item
-            name="modifier"
-            className="collection-create-form_last-form-item"
-          >
-            <Radio.Group>
-              <Radio value="ff">Friend / Family</Radio>
-              <Radio value="hardware">Hardware</Radio>
-            </Radio.Group>
-          </Form.Item>
-        </Form>}
+            <Form.Item
+              name="modifier"
+              className="collection-create-form_last-form-item"
+            >
+              <Radio.Group>
+                <Radio value="ff">Friend / Family</Radio>
+                <Radio value="hardware">Hardware</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
 
       {/* <PhraseBox guardian={guardians[0].publicKey.toBase58()}></PhraseBox> */}

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { Button, Alert, Popconfirm, Form, Input, Radio } from "antd";
-import PhraseBox from "../components/PhraseBox";
+import PhraseBox from "../components/UrlBox";
 import { useGlobalState } from "../context";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
+import Axios from "axios";
 
 // Import Bip39 to generate a phrase and convert it to a seed:
 import * as Bip39 from "bip39";
@@ -21,6 +22,15 @@ import {
 import Paragraph from "antd/lib/skeleton/Paragraph";
 import { Box } from "../styles/StyledComponents.styles";
 import form from "antd/lib/form";
+
+import {
+  getOrCreateAssociatedTokenAccount,
+  AccountLayout,
+  TOKEN_PROGRAM_ID,
+  createSyncNativeInstruction,
+  mintTo,
+  createAssociatedTokenAccountInstruction,
+} from "@solana/spl-token";
 
 const BN = require("bn.js");
 
@@ -52,35 +62,49 @@ const feePayer_sk = new Uint8Array([
   130, 117, 57, 231, 233, 104, 23, 140, 129, 15, 25, 53, 178,
 ]);
 
+const mintAuthority_sk = new Uint8Array([
+  241, 145, 177, 126, 244, 190, 248, 188, 151, 50, 224, 196, 43, 153, 22, 94,
+  67, 183, 97, 245, 201, 103, 103, 109, 45, 164, 181, 109, 138, 152, 137, 101,
+  163, 141, 201, 165, 214, 152, 171, 237, 175, 1, 228, 183, 81, 244, 27, 10,
+  157, 38, 80, 90, 173, 131, 130, 132, 188, 250, 138, 16, 12, 217, 109, 213,
+]);
+
+const customMint = new PublicKey(
+  "9mMtr7Rx8ajjpRbHmUzb5gjgBLqNtPABdkNiUBAkTrmR"
+);
+
+const SOL_MINT = "So11111111111111111111111111111111111111112";
+const sol_pk = new PublicKey(SOL_MINT);
+
+const program_id = new PublicKey(
+  "2aJqX3GKRPAsfByeMkL7y9SqAGmCQEnakbuHJBdxGaDL"
+);
+
 const Signup: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const {
     setAccount,
     account,
-    mnemonic,
-    setMnemonic,
-    setGuardians,
-    guardians,
     setPDA,
     pda,
     programId,
-    setProgramId
+    setProgramId,
   } = useGlobalState();
 
   const router = useRouter();
   const [form] = Form.useForm();
-  
+
+  const mintAuthority = Keypair.fromSecretKey(mintAuthority_sk);
 
   useEffect(() => {
     // const guard1 = Keypair.fromSecretKey(guard1_sk);
     // const guard2 = Keypair.fromSecretKey(guard2_sk);
     // const guard3 = Keypair.fromSecretKey(guard3_sk);
     // const feePayer = Keypair.fromSecretKey(feePayer_sk);
-    const program_id = new PublicKey(
-      "2aJqX3GKRPAsfByeMkL7y9SqAGmCQEnakbuHJBdxGaDL"
-    );
+
     const feePayer = new Keypair();
+    //const feePayer = Keypair.fromSecretKey(feePayer_sk);
     const profile_pda = PublicKey.findProgramAddressSync(
       [Buffer.from("profile", "utf-8"), feePayer.publicKey.toBuffer()],
       program_id ?? new Keypair().publicKey
@@ -107,19 +131,16 @@ const Signup: NextPage = () => {
 
   const handleOk = async () => {
     setLoading(true);
-    const nonceAccount = new Keypair();
-    // setGuardians([
-    //   new PublicKey(values.guardian1),
-    //   new PublicKey(values.guardian2),
-    //   new PublicKey(values.guardian3),
-    // ]);
     const connection = new Connection("https://api.devnet.solana.com/");
 
-    console.log("pk: ", account?.publicKey.toBase58())
-    console.log("program id: ", programId?.toBase58())
+    console.log("pk: ", account?.publicKey.toBase58());
+    console.log("program id: ", programId?.toBase58());
 
     console.log("Requesting Airdrop of 1 SOL...");
-    const signature = await connection.requestAirdrop(account?.publicKey ?? new Keypair().publicKey, 1e9);
+    const signature = await connection.requestAirdrop(
+      account?.publicKey ?? new Keypair().publicKey,
+      1e9
+    );
     await connection.confirmTransaction(signature, "finalized");
     console.log("Airdrop received");
 
@@ -152,56 +173,12 @@ const Signup: NextPage = () => {
       data: Buffer.concat([idx, acct_len, recovery_threshold]),
     });
 
-    // Transaction 1: setup nonce
-    let tx = new Transaction();
-    tx.add(
-      // create nonce account
-      SystemProgram.createAccount({
-        fromPubkey: account?.publicKey ?? new Keypair().publicKey,
-        newAccountPubkey: nonceAccount.publicKey,
-        lamports: await connection.getMinimumBalanceForRentExemption(
-          NONCE_ACCOUNT_LENGTH
-        ),
-        space: NONCE_ACCOUNT_LENGTH,
-        programId: SystemProgram.programId,
-      }),
-      // init nonce account
-      SystemProgram.nonceInitialize({
-        noncePubkey: nonceAccount.publicKey, // nonce account pubkey
-        authorizedPubkey: account?.publicKey ?? new Keypair().publicKey, // nonce account auth
-      })
-    );
-    (tx.feePayer = account?.publicKey ?? new Keypair().publicKey),
-      console.log("Sending nonce transaction...");
-    let txid = await sendAndConfirmTransaction(
-      connection,
-      tx,
-      [account ?? new Keypair(), nonceAccount],
-      {
-        skipPreflight: true,
-        preflightCommitment: "confirmed",
-        commitment: "confirmed",
-      }
-    );
-    console.log(`https://explorer.solana.com/tx/${txid}?cluster=devnet\n`);
-
-    let nonceAccountData = await connection.getNonce(
-      nonceAccount.publicKey,
-      "confirmed"
-    );
-
-    // Transaction 3: Initialize wallet
+    
     console.log("Initializing social wallet...");
-    tx = new Transaction();
-    // tx.add(
-    //   SystemProgram.nonceAdvance({
-    //     noncePubkey: nonceAccount.publicKey,
-    //     authorizedPubkey: account?.publicKey ?? new Keypair().publicKey,
-    //   })
+    let tx = new Transaction();
     tx.add(initializeSocialWalletIx);
-    tx.recentBlockhash = nonceAccountData?.nonce;
 
-    txid = await sendAndConfirmTransaction(
+    let txid = await sendAndConfirmTransaction(
       connection,
       tx,
       [account ?? new Keypair()],
@@ -212,6 +189,97 @@ const Signup: NextPage = () => {
       }
     );
     console.log(`https://explorer.solana.com/tx/${txid}?cluster=devnet\n`);
+
+    // CREATE TOKEN ACCOUNT & AIRDROP for TESTING!
+    // get pda
+    const profile_pda = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("profile", "utf-8"),
+        account?.publicKey.toBuffer() ?? new Buffer(""),
+      ],
+      program_id
+    );
+    console.log("PDA: ", profile_pda[0].toBase58())
+
+    // Create Token Account for custom mint
+    console.log("Creating token account for mint...");
+    const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      connection,
+      account ?? new Keypair(),
+      customMint,
+      profile_pda[0],
+      true
+    );
+    console.log(
+      "token account created: " + senderTokenAccount.address.toBase58() + "\n"
+    );
+
+    // console.log("Creating token account for native SOL...");
+    // const senderSOLTokenAccount = await getOrCreateAssociatedTokenAccount(
+    //   connection,
+    //   account ?? new Keypair(),
+    //   sol_pk,
+    //   profile_pda[0],
+    //   true
+    // );
+    // console.log(
+    //   "token account created: " +
+    //     senderSOLTokenAccount.address.toBase58() +
+    //     "\n"
+    // );
+
+    // // transfer SOL to sender token account (MINTING)
+    // const transferSOLtoSender = SystemProgram.transfer({
+    //   fromPubkey: account?.publicKey ?? new Keypair().publicKey,
+    //   toPubkey: senderSOLTokenAccount.address,
+    //   lamports: 1e8,
+    // });
+
+    // tx = new Transaction()
+    //   .add(transferSOLtoSender)
+    //   .add(createSyncNativeInstruction(senderSOLTokenAccount.address));
+
+    // console.log("Transfer SOL to sender account...");
+    // let getSOL_txid = await sendAndConfirmTransaction(
+    //   connection,
+    //   tx,
+    //   [account ?? new Keypair()],
+    //   {
+    //     skipPreflight: true,
+    //     preflightCommitment: "confirmed",
+    //     commitment: "confirmed",
+    //   }
+    // );
+    // console.log(
+    //   `https://explorer.solana.com/tx/${getSOL_txid}?cluster=devnet\n`
+    // );
+
+    // const senderSOLTokenAccountBalance =
+    //   await connection.getTokenAccountBalance(senderSOLTokenAccount.address);
+    // console.log(
+    //   `Sender SOL Token Account Balance: ${senderSOLTokenAccountBalance.value.amount}\n`
+    // );
+
+    // Mint to token account (MINTING)
+    console.log("Minting to token account...");
+    await mintTo(
+      connection,
+      account ?? new Keypair(),
+      customMint,
+      senderTokenAccount.address,
+      mintAuthority,
+      6e9
+      //[],
+      //{skipPreflight: true},
+    );
+    console.log("Minted!\n");
+
+    const senderTokenAccountBalance = await connection.getTokenAccountBalance(
+      senderTokenAccount.address
+    );
+    console.log(
+      `Sender Token Account Balance: ${senderTokenAccountBalance.value.amount}\n`
+    );
 
     router.push("/wallet");
   };

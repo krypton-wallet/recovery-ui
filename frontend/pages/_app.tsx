@@ -14,9 +14,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [guardians, setGuardians] = useState<Array<PublicKey>>([]);
   const [pda, setPDA] = useState<PublicKey | null>(null);
   const [programId, setProgramId] = useState<PublicKey | null>(null);
+  const [recoverPk, setRecoverPk] = useState<PublicKey | null>(null);
 
   return (
-    <GlobalContext.Provider value={{ network, setNetwork, account, setAccount, mnemonic, setMnemonic, balance, setBalance, guardians, setGuardians, pda, setPDA, programId, setProgramId }}>
+    <GlobalContext.Provider value={{ network, setNetwork, account, setAccount, mnemonic, setMnemonic, balance, setBalance, guardians, setGuardians, pda, setPDA, programId, setProgramId, recoverPk, setRecoverPk }}>
       <Layout>
         <Component {...pageProps} />
       </Layout>
