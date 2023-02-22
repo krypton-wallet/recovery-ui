@@ -30,6 +30,8 @@ import {
   createSyncNativeInstruction,
   mintTo,
   createAssociatedTokenAccountInstruction,
+  getAssociatedTokenAddress,
+  getAccount,
 } from "@solana/spl-token";
 
 const BN = require("bn.js");
@@ -83,14 +85,8 @@ const program_id = new PublicKey(
 const Signup: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const {
-    setAccount,
-    account,
-    setPDA,
-    pda,
-    programId,
-    setProgramId,
-  } = useGlobalState();
+  const { setAccount, account, setPDA, pda, programId, setProgramId } =
+    useGlobalState();
 
   const router = useRouter();
   const [form] = Form.useForm();
@@ -173,7 +169,6 @@ const Signup: NextPage = () => {
       data: Buffer.concat([idx, acct_len, recovery_threshold]),
     });
 
-    
     console.log("Initializing social wallet...");
     let tx = new Transaction();
     tx.add(initializeSocialWalletIx);
@@ -199,17 +194,49 @@ const Signup: NextPage = () => {
       ],
       program_id
     );
-    console.log("PDA: ", profile_pda[0].toBase58())
+    console.log("PDA: ", profile_pda[0].toBase58());
 
     // Create Token Account for custom mint
-    console.log("Creating token account for mint...");
-    const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
-      connection,
-      account ?? new Keypair(),
+    // console.log("Creating token account for mint...");
+    // const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+    //   connection,
+    //   account ?? new Keypair(),
+    //   customMint,
+    //   profile_pda[0],
+    //   true
+    // );
+    // console.log(
+    //   "token account created: " + senderTokenAccount.address.toBase58() + "\n"
+    // );
+
+    console.log("Getting associated token address...");
+    const associatedToken = await getAssociatedTokenAddress(
       customMint,
       profile_pda[0],
       true
     );
+
+    console.log("Creating token account for mint...");
+    const createTA_tx = new Transaction().add(
+      createAssociatedTokenAccountInstruction(
+        account?.publicKey ?? new Keypair().publicKey,
+        associatedToken,
+        profile_pda[0],
+        customMint
+      )
+    );
+
+    await sendAndConfirmTransaction(connection, createTA_tx, [
+      account ?? new Keypair(),
+    ]);
+
+    console.log("Getting sender token account...");
+    const senderTokenAccount = await getAccount(
+      connection,
+      associatedToken,
+      "confirmed"
+    );
+
     console.log(
       "token account created: " + senderTokenAccount.address.toBase58() + "\n"
     );
@@ -262,6 +289,8 @@ const Signup: NextPage = () => {
 
     // Mint to token account (MINTING)
     console.log("Minting to token account...");
+    console.log(customMint.toBase58());
+    console.log(senderTokenAccount.address.toBase58());
     await mintTo(
       connection,
       account ?? new Keypair(),
@@ -288,7 +317,8 @@ const Signup: NextPage = () => {
     <>
       <h1 className={"title"}>Account Signup</h1>
 
-      <p>Confirming your signup...</p>
+      {!loading && <p>Confirm your signup</p>}
+      {loading && <p>Confirming your signup...</p>}
 
       {/* <Form
         form={form}

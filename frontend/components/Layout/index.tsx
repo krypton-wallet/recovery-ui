@@ -79,6 +79,7 @@ const Layout = ({ children }: { children: JSX.Element }): ReactElement => {
           <Link href={`/`} passHref>
             <div className={`${styles.top} ${styles.logo}`}>SolMate</div>
           </Link>
+          <link href="/dist/output.css" rel="stylesheet"></link>
 
           <Menu
             mode="horizontal"

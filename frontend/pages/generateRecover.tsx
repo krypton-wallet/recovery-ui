@@ -54,7 +54,7 @@ const GenerateRecover: NextPage = () => {
       - Initialize recoveryWallet transaction and store it in DB
   */
   const handleGenerate = async (values: any) => {
-    setGenerated(true);
+    setLoading(true);
     const pk = new PublicKey(values.pk);
     setRecoverPk(pk);
 
@@ -271,6 +271,10 @@ const GenerateRecover: NextPage = () => {
       console.log(res);
     });
     console.log("DB entry created for transaction entry");
+    
+    setGenerated(true);
+    setLoading(false);
+
   };
 
   useEffect(() => {

@@ -39,7 +39,7 @@ const Recover: NextPage = () => {
       </p>
 
       <WalletContextProvider>
-        <WalletMultiButton />
+        <WalletMultiButton className="px-10 py-10"/>
         <br />
         <SignTransaction pk={pk}/>
       </WalletContextProvider>
