@@ -8,7 +8,6 @@ import styled from "styled-components";
 
 import { Keypair } from "@solana/web3.js";
 import { SignTransaction } from "../../components/signTransaction";
-import { ContextProvider } from "../../components/ContextProvider";
 import { WalletMultiButton } from "@solana/wallet-adapter-ant-design";
 import WalletContextProvider from "../../components/WalletContextProvider";
 

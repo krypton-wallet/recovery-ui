@@ -145,7 +145,7 @@ const Guardian: NextPage = () => {
       <div>
         {guardians?.map((g) => {
           console.log(g);
-          return <GuardianBox guardian={g}></GuardianBox>;
+          return <GuardianBox key={g.toBase58()} guardian={g}></GuardianBox>;
         })}
       </div>
 
