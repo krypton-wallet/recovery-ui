@@ -18,6 +18,8 @@ export type GlobalContextType = {
   setProgramId: React.Dispatch<React.SetStateAction<PublicKey | null>>;
   recoverPk: PublicKey | null;
   setRecoverPk: React.Dispatch<React.SetStateAction<PublicKey | null>>;
+  finished: boolean;
+  setFinished: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const GlobalContext = createContext<GlobalContextType>({
@@ -37,6 +39,8 @@ export const GlobalContext = createContext<GlobalContextType>({
   setProgramId: () => null,
   recoverPk: null,
   setRecoverPk: () => null,
+  finished: false,
+  setFinished: () => null,
 });
 
 export const useGlobalState = () => useContext(GlobalContext);

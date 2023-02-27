@@ -14,14 +14,10 @@ import WalletContextProvider from "../../components/WalletContextProvider";
 // Import the Keypair class from Solana's web3.js library:
 
 const Recover: NextPage = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [form] = Form.useForm();
   const router = useRouter();
   const { pk } = router.query;
 
-  const { account, setAccount, setMnemonic } = useGlobalState();
-
-  const onRecover = () => {};
+  const { account, finished } = useGlobalState();
 
   useEffect(() => {
     if (account) {
@@ -33,23 +29,17 @@ const Recover: NextPage = () => {
     <>
       <h1 className={"title"}>Recover your SolMate</h1>
 
-      <p>
-        Sign a recovery transaction to help your SolMate <br></br> {pk}
-      </p>
+      {!finished && (
+        <p>
+          Sign a recovery transaction to help your SolMate <br></br> {pk}
+        </p>
+      )}
 
       <WalletContextProvider>
-        <WalletMultiButton className="px-10 py-10"/>
-        <br />
-        <SignTransaction pk={pk}/>
+        {!finished && <WalletMultiButton className="px-10 py-10" />}
+        {!finished && <br />}
+        <SignTransaction pk={pk} />
       </WalletContextProvider>
-
-      {/* {!loading && (
-        <Button type="primary" onClick={onRecover}>
-          Recover
-        </Button>
-      )} */}
-
-      {loading && <LoadingOutlined style={{ fontSize: 24 }} spin />}
     </>
   );
 };
