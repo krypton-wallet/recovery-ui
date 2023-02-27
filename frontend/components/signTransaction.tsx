@@ -37,10 +37,7 @@ export const SignTransaction: FC<{ pk: string | string[] | undefined }> = (
       if (res_data == undefined) {
         throw new Error("Invalid signing request!");
       }
-
-      const executor = Keypair.fromSecretKey(base58.decode(res_data.executor));
-      console.log("PK new: ", res_data.newpk);
-      console.log("Executor: ", executor.publicKey.toBase58());
+      console.log("PK new: ", res_data.new_pk);
 
       let transactionBased64 = res_data.transaction;
       let transaction = Transaction.from(
@@ -71,7 +68,7 @@ export const SignTransaction: FC<{ pk: string | string[] | undefined }> = (
 
       // If signature threshold is reached, then we can verify the signatures &
       // transfer+close
-      if (res_data.signed_cnt + 1 >= res_data.thres) {
+      if (res_data.sig_remain == 1) {
         console.log("THRES REACHED");
       }
       const serializedTx = transaction.serialize({

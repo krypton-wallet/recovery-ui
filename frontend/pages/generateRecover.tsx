@@ -262,9 +262,8 @@ const GenerateRecover: NextPage = () => {
     console.log("Creating transaction entry in DB...");
     await Axios.post("http://localhost:5000/api/create", {
       pk: pk,
-      newpk: newFeePayer.publicKey,
-      thres: 2,
-      signed_cnt: 0,
+      new_pk: newFeePayer.publicKey,
+      sig_remain: 2,
       transaction: txBased64,
       executor: bs58.encode(executor.secretKey),
     }).then((res) => {
