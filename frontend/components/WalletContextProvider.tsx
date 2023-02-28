@@ -6,6 +6,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider as AntDesignWalletModalProvider } from '@solana/wallet-adapter-ant-design';
 import { clusterApiUrl } from "@solana/web3.js";
+require('@solana/wallet-adapter-ant-design/styles.css');
 
 import {
   PhantomWalletAdapter,
