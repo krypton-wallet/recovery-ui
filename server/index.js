@@ -22,17 +22,32 @@ app.get("/api/getAll", (req, res) => {
   });
 });
 
-// Route to get one post
+// Route to get one post from pk to recover
 app.get("/api/getFromPk/:pk", (req, res) => {
-    const pk = req.params.pk;
-    db.query("SELECT * FROM transactions WHERE pk = ?", pk, (err, result) => {
+  const pk = req.params.pk;
+  db.query("SELECT * FROM transactions WHERE pk = ?", pk, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log("db get res: ", result);
+    res.send(result);
+  });
+});
+
+// Route to get one post from new pk
+app.get("/api/getFromNewPk/:new_pk", (req, res) => {
+  const new_pk = req.params.new_pk;
+  db.query(
+    "SELECT * FROM transactions WHERE new_pk = ?",
+    new_pk,
+    (err, result) => {
       if (err) {
         console.log(err);
       }
-      console.log('db get res: ', result)
       res.send(result);
-    });
-  });
+    }
+  );
+});
 
 // Route for creating the post
 app.post("/api/create", (req, res) => {
@@ -56,21 +71,21 @@ app.post("/api/create", (req, res) => {
 
 // Route for update transaction
 app.post("/api/update", (req, res) => {
-    const pk = req.body.pk;
-    const new_transaction = req.body.new_transaction;
+  const pk = req.body.pk;
+  const new_transaction = req.body.new_transaction;
 
-    db.query(
-      "UPDATE transactions SET sig_remain = sig_remain - 1, transaction = ? WHERE pk = ?",
-      [new_transaction, pk],
-      (err, result) => {
-        if (err) {
-          console.log(err);
-        }
-        console.log(result);
-        res.send(result);
+  db.query(
+    "UPDATE transactions SET sig_remain = sig_remain - 1, transaction = ? WHERE pk = ?",
+    [new_transaction, pk],
+    (err, result) => {
+      if (err) {
+        console.log(err);
       }
-    );
-  });
+      console.log(result);
+      res.send(result);
+    }
+  );
+});
 
 // Route to delete a transaction
 app.delete("/api/delete/:pk", (req, res) => {
