@@ -80,6 +80,7 @@ app.delete("/api/delete/:pk", (req, res) => {
     if (err) {
       console.log(err);
     }
+    res.send("pk deleted!");
   });
 });
 
