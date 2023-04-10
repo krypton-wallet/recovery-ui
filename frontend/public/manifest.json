@@ -1,10 +1,10 @@
 {
-    "name": "SolMate",
-    "description": "It does something cool!",
+    "name": "Krypton",
+    "description": "Next generation smart contract wallet with social recovery",
     "version": "0.0.1",
     "manifest_version": 3,
     "action": {
-      "default_title": "SolMate app",
+      "default_title": "Krypton app",
       "default_popup": "index.html"
     }
     

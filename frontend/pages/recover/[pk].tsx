@@ -27,11 +27,11 @@ const Recover: NextPage = () => {
 
   return (
     <>
-      <h1 className={"title"}>Recover your SolMate</h1>
+      <h1 className={"title"}>Recover your Kryptonian</h1>
 
       {!finished && (
         <p>
-          Sign a recovery transaction to help your SolMate <br></br> {pk}
+          Sign a recovery transaction to help your Kryptonian <br></br> {pk}
         </p>
       )}
 

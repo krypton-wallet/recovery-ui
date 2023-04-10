@@ -12,9 +12,9 @@ const Home: NextPage = () => {
       <Head>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <meta charSet="utf-8" />
-        <title>SolMate</title>
-        <meta name="description" content="Web3 tutorial for Solana crypto wallet." />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Krypton</title>
+        <meta name="description" content="Next-gen smart contract wallet" />
+        <link rel="icon" href="/krypton_logo.ico" />
       </Head>
       <HomeTitle>
       a <a href="https://solana.com/">Solana</a> smart contract wallet with multisig social recovery

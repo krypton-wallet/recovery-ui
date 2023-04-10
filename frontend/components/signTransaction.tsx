@@ -114,7 +114,7 @@ export const SignTransaction: FC<{ pk: string | string[] | undefined }> = (
         <Result
           status="success"
           title="Successfully Signed!"
-          subTitle="Notify your solmate that you have signed"
+          subTitle="Notify your guardians that you have signed"
         />
       )}
       {finished && !succeeded && (

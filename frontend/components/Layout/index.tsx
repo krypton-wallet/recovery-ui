@@ -75,18 +75,19 @@ const Layout = ({ children }: { children: JSX.Element }): ReactElement => {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
+      <link rel="icon" href="/krypton_logo.ico" />
         <header className={styles.header}>
+          <title>Krypton</title>
           <Link href={`/`} passHref>
-            <div className={`${styles.top} ${styles.logo}`}>SolMate</div>
+            <div className={`${styles.top} ${styles.logo}`}>Krypton</div>
           </Link>
-          <link href="/dist/output.css" rel="stylesheet"></link>
+          
 
           <Menu
             mode="horizontal"
             className={styles.nav}
             selectedKeys={[router.pathname]}
           >
-
             <Dropdown className={styles.top} overlay={menu} disabled={!account}>
               <a
                 className="ant-dropdown-link"
