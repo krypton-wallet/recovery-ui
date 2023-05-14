@@ -18,6 +18,7 @@ const Recover: NextPage = () => {
   const { pk } = router.query;
 
   const { account, finished } = useGlobalState();
+  console.log(pk);
 
   useEffect(() => {
     if (account) {

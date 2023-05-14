@@ -10,51 +10,51 @@ import * as web3 from '@solana/web3.js'
 
 /**
  * @category Instructions
- * @category RecoverWallet
+ * @category InitializeRecovery
  * @category generated
  */
-export const RecoverWalletStruct = new beet.BeetArgsStruct<{
+export const InitializeRecoveryStruct = new beet.BeetArgsStruct<{
   instructionDiscriminator: number
-}>([['instructionDiscriminator', beet.u8]], 'RecoverWalletInstructionArgs')
+}>([['instructionDiscriminator', beet.u8]], 'InitializeRecoveryInstructionArgs')
 /**
- * Accounts required by the _RecoverWallet_ instruction
+ * Accounts required by the _InitializeRecovery_ instruction
  *
- * @property [] profileInfo PDA of Krypton Program to be recovered
+ * @property [_writable_] profileInfo PDA of Krypton Program to be recovered
  * @property [] authorityInfo Pubkey of keypair of PDA to be recovered
- * @property [_writable_] newProfileInfo PDA to be recovered into
+ * @property [] newProfileInfo PDA to be recovered into
  * @property [**signer**] newAuthorityInfo Pubkey of the keypair to be recovered into
  * @category Instructions
- * @category RecoverWallet
+ * @category InitializeRecovery
  * @category generated
  */
-export type RecoverWalletInstructionAccounts = {
+export type InitializeRecoveryInstructionAccounts = {
   profileInfo: web3.PublicKey
   authorityInfo: web3.PublicKey
   newProfileInfo: web3.PublicKey
   newAuthorityInfo: web3.PublicKey
 }
 
-export const recoverWalletInstructionDiscriminator = 8
+export const initializeRecoveryInstructionDiscriminator = 7
 
 /**
- * Creates a _RecoverWallet_ instruction.
+ * Creates a _InitializeRecovery_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @category Instructions
- * @category RecoverWallet
+ * @category InitializeRecovery
  * @category generated
  */
-export function createRecoverWalletInstruction(
-  accounts: RecoverWalletInstructionAccounts,
+export function createInitializeRecoveryInstruction(
+  accounts: InitializeRecoveryInstructionAccounts,
   programId = new web3.PublicKey('2aJqX3GKRPAsfByeMkL7y9SqAGmCQEnakbuHJBdxGaDL')
 ) {
-  const [data] = RecoverWalletStruct.serialize({
-    instructionDiscriminator: recoverWalletInstructionDiscriminator,
+  const [data] = InitializeRecoveryStruct.serialize({
+    instructionDiscriminator: initializeRecoveryInstructionDiscriminator,
   })
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.profileInfo,
-      isWritable: false,
+      isWritable: true,
       isSigner: false,
     },
     {
@@ -64,7 +64,7 @@ export function createRecoverWalletInstruction(
     },
     {
       pubkey: accounts.newProfileInfo,
-      isWritable: true,
+      isWritable: false,
       isSigner: false,
     },
     {
