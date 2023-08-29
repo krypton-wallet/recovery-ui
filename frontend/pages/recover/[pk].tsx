@@ -1,45 +1,39 @@
-import React, { useEffect, useState } from "react";
+import { WalletMultiButton } from "@solana/wallet-adapter-ant-design";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { Form, Input, Button } from "antd";
-import { useGlobalState } from "../../context";
-import { LoadingOutlined } from "@ant-design/icons";
-import styled from "styled-components";
-
-import { Keypair } from "@solana/web3.js";
-import { SignTransaction } from "../../components/signTransaction";
-import { WalletMultiButton } from "@solana/wallet-adapter-ant-design";
+import { useState } from "react";
 import WalletContextProvider from "../../components/WalletContextProvider";
-
-// Import the Keypair class from Solana's web3.js library:
+import { SignTransaction } from "../../components/signTransaction";
 
 const Recover: NextPage = () => {
+  const [finished, setFinished] = useState<boolean>(false);
+
   const router = useRouter();
   const { pk } = router.query;
 
-  const { account, finished } = useGlobalState();
-  console.log(pk);
-
-  useEffect(() => {
-    if (account) {
-      router.push("/wallet");
-    }
-  }, [account, router]);
-
   return (
     <>
-      <h1 className={"title"}>Recover your Kryptonian</h1>
+      <h1>Recover your Kryptonian</h1>
 
       {!finished && (
         <p>
-          Sign a recovery transaction to help your Kryptonian <br></br> {pk}
+          Sign a recovery transaction to help your Kryptonian <br />
+          <code>{pk}</code>
         </p>
       )}
 
       <WalletContextProvider>
-        {!finished && <WalletMultiButton className="px-10 py-10" />}
-        {!finished && <br />}
-        <SignTransaction pk={pk} />
+        {!finished && (
+          <>
+            <WalletMultiButton />
+            <br />
+          </>
+        )}
+        <SignTransaction
+          pk={pk}
+          finished={finished}
+          setFinished={setFinished}
+        />
       </WalletContextProvider>
     </>
   );

@@ -5,7 +5,7 @@
 }
 
 .main {
-  padding: 3rem 0;
+  padding-top: 3rem;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -16,52 +16,18 @@
 .header {
   max-width: 1000px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   width: 100%;
 }
 
-.top {
+.logo {
   margin: auto 0;
   padding: 0 1rem;
   color: black;
-}
-
-.logo {
-  font-weight: bold;
+  font-weight: 600;
   font-size: 1.5rem;
 }
 
 .logo:hover {
-  cursor: pointer;
-  color: #0070f3;
-}
-
-.nav {
-  width: 100%;
-  justify-content: right;
-}
-
-a.back {
-  color: #aaa;
-  margin-top: 2rem;
-}
-
-a.back:hover,
-a.back:focus,
-a.back:active {
-  color: #0070f3;
-}
-
-.footerHome {
-  margin: 1rem 0;
-}
-
-.footerLink {
-  color: #999;
-}
-
-.footerLink:hover,
-.footerLink:focus,
-.footerLink:active {
   color: #0070f3;
 }

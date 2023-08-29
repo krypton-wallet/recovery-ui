@@ -1,40 +1,40 @@
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { LoadingOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import {
-  Connection,
-  PublicKey,
-  Transaction,
-  sendAndConfirmTransaction,
-} from "@solana/web3.js";
+import { LoadingOutlined } from "@ant-design/icons";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { Button, Result } from "antd";
-import bs58 from "bs58";
-import { FC, useEffect, useState } from "react";
-import React, { useCallback } from "react";
-import { useGlobalState } from "../context";
+import Text from "antd/lib/typography/Text";
+import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import * as krypton from "../js/src/generated/index";
-import { Typography } from "antd";
 
-const { Text } = Typography;
-
-export const SignTransaction: FC<{ pk: string | string[] | undefined }> = (
-  pk_obj
-) => {
-  const { publicKey, signTransaction, sendTransaction } = useWallet();
+export const SignTransaction: FC<{
+  pk: string | string[] | undefined;
+  finished: boolean;
+  setFinished: Dispatch<SetStateAction<boolean>>;
+}> = ({ pk, finished, setFinished }) => {
+  const { publicKey, signTransaction } = useWallet();
   const [loading, setLoading] = useState<boolean>(false);
-  const { finished, setFinished } = useGlobalState();
   const [succeeded, setSucceeded] = useState<boolean>(false);
   const [msg, setMsg] = useState<string>("");
 
   const onClick = useCallback(async () => {
     try {
       setLoading(true);
-      if (!publicKey) throw new Error("Wallet not connected!");
-      if (!signTransaction)
+
+      if (!publicKey) {
+        throw new Error("Wallet not connected!");
+      }
+
+      if (!pk) {
+        throw new Error("Invalid recovery PublicKey");
+      }
+
+      if (!signTransaction) {
         throw new Error("Wallet does not support transaction signing!");
+      }
 
       const connection = new Connection("http://localhost:8899");
 
-      const recoverPDA = new PublicKey(pk_obj.pk!);
+      const recoverPDA = new PublicKey(pk);
       console.log("PK to recover: ", recoverPDA.toBase58());
       const profileAccount = await connection.getAccountInfo(recoverPDA);
       if (!profileAccount) {
@@ -87,35 +87,35 @@ export const SignTransaction: FC<{ pk: string | string[] | undefined }> = (
     }
     setFinished(true);
     setLoading(false);
-  }, [setFinished, publicKey, signTransaction, pk_obj.pk]);
+  }, [setFinished, publicKey, signTransaction, pk]);
 
   return (
     <>
-      {!loading && !finished && (
-        <Button onClick={onClick}>Sign Transaction</Button>
-      )}
-      {loading && !finished && (
-        <LoadingOutlined style={{ fontSize: 24 }} spin />
-      )}
-      {finished && succeeded && (
-        <Result
-          status="success"
-          title="Successfully Signed!"
-          subTitle="Notify your guardians that you have signed"
-        />
-      )}
-      {finished && !succeeded && (
-        <Result
-          status="error"
-          title="Signing Failed"
-          subTitle="Please check if you are recovering the correct wallet"
-          extra={<Button onClick={onClick}>Sign Again</Button>}
-        >
-          <div className="desc" style={{ textAlign: "center" }}>
-            <Text type="danger">{msg}</Text>
-          </div>
-        </Result>
-      )}
+      {!finished &&
+        (loading ? (
+          <LoadingOutlined style={{ fontSize: 24 }} spin />
+        ) : (
+          <Button onClick={onClick}>Sign Transaction</Button>
+        ))}
+      {finished &&
+        (succeeded ? (
+          <Result
+            status="success"
+            title="Successfully Signed!"
+            subTitle="Notify your guardians that you have signed"
+          />
+        ) : (
+          <Result
+            status="error"
+            title="Signing Failed"
+            subTitle="Please check if you are recovering the correct wallet"
+            extra={<Button onClick={onClick}>Sign Again</Button>}
+          >
+            <div style={{ textAlign: "center" }}>
+              <Text type="danger">{msg}</Text>
+            </div>
+          </Result>
+        ))}
     </>
   );
 };
