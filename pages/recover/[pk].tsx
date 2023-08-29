@@ -20,7 +20,9 @@ const Recover: NextPage = () => {
         {!finished && (
           <p className={styles.paragraph}>
             Sign a recovery transaction to help your Kryptonian <br />
-            <code>{pk}</code>
+            <b>
+              <code>{pk}</code>
+            </b>
           </p>
         )}
 
