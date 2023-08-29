@@ -103,6 +103,7 @@ export const SignTransaction: FC<{
             status="success"
             title="Successfully Signed!"
             subTitle="Notify your guardians that you have signed"
+            style={{ padding: 0 }}
           />
         ) : (
           <Result
@@ -110,6 +111,7 @@ export const SignTransaction: FC<{
             title="Signing Failed"
             subTitle="Please check if you are recovering the correct wallet"
             extra={<Button onClick={onClick}>Sign Again</Button>}
+            style={{ padding: 0 }}
           >
             <div style={{ textAlign: "center" }}>
               <Text type="danger">{msg}</Text>

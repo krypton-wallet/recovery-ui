@@ -1,7 +1,6 @@
 import { Result } from "antd";
-import { FC } from "react";
 
-const Error: FC = () => (
+const Error = () => (
   <Result
     status="404"
     title="404 - Page Not Found"

@@ -7,7 +7,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     <div className={styles.container}>
       <main className={styles.main}>
         <header className={styles.header}>
-          <span className={`${styles.top} ${styles.logo}`}>Krypton</span>
+          <span className={styles.logo}>Krypton</span>
           <Divider style={{ margin: "1rem 0" }} />
         </header>
         {children}

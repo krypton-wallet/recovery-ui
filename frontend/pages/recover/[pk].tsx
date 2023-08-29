@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import WalletContextProvider from "../../components/WalletContextProvider";
 import { SignTransaction } from "../../components/signTransaction";
+import styles from "./[pk].module.css";
 
 const Recover: NextPage = () => {
   const [finished, setFinished] = useState<boolean>(false);
@@ -15,26 +16,28 @@ const Recover: NextPage = () => {
     <>
       <h1>Recover your Kryptonian</h1>
 
-      {!finished && (
-        <p>
-          Sign a recovery transaction to help your Kryptonian <br />
-          <code>{pk}</code>
-        </p>
-      )}
-
-      <WalletContextProvider>
+      <div className={styles.container}>
         {!finished && (
-          <>
-            <WalletMultiButton />
-            <br />
-          </>
+          <p className={styles.paragraph}>
+            Sign a recovery transaction to help your Kryptonian <br />
+            <code>{pk}</code>
+          </p>
         )}
-        <SignTransaction
-          pk={pk}
-          finished={finished}
-          setFinished={setFinished}
-        />
-      </WalletContextProvider>
+
+        <WalletContextProvider>
+          {!finished && (
+            <>
+              <WalletMultiButton />
+              <br />
+            </>
+          )}
+          <SignTransaction
+            pk={pk}
+            finished={finished}
+            setFinished={setFinished}
+          />
+        </WalletContextProvider>
+      </div>
     </>
   );
 };
