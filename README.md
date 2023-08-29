@@ -1,4 +1,4 @@
-# Krypton Recovery
+# Krypton Recovery UI
 
 This repo contains the web frontend for guardians to sign a recovery transaction as a part of the Krypton wallet recovery process.
 
