@@ -10,7 +10,7 @@
     "dev:static": "serve ./out"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.5",
+    "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.10.5",
     "@mui/material": "^5.11.8",
     "@solana/spl-token": "^0.3.7",
