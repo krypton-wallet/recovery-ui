@@ -28,7 +28,7 @@
     "next": "11.1.2",
     "notistack": "^2.0.8",
     "number-to-words": "^1.2.4",
-    "prettier": "^2.8.4",
+    "prettier": "^3.0.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "styled-components": "^5.3.1"
